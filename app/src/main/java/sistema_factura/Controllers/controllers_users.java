@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.mindrot.jbcrypt.BCrypt;
 import sistema_factura.Models.Cliente;
+import sistema_factura.Models.provedor;
 
 public class controllers_users {
 
@@ -163,5 +164,96 @@ public class controllers_users {
     }
 
     // Client crud operations <>
+    // Provedor crud operations <>
+
+
+    public boolean Insert_provedor(provedor prov) {
+        String sql = "INSERT INTO proveedor (pais_proveedor, ciudad_proveedor, tipo_proveedor, direccion_proveedor, nombre_proveedor, telefono_proveedor, correo_proveedor, fecha_registro, condiciones_pago, estado) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, prov.getPaisProveedor());
+            preparedStatement.setString(2, prov.getCiudadProveedor());
+            preparedStatement.setString(3, prov.getTipoProveedor().name());
+            preparedStatement.setString(4, prov.getDireccionProveedor());
+            preparedStatement.setString(5, prov.getNombreProveedor());
+            preparedStatement.setString(6, prov.getTelefonoProveedor());
+            preparedStatement.setString(7, prov.getCorreoProveedor());
+            preparedStatement.setDate(8, java.sql.Date.valueOf(prov.getFechaRegistro()));
+            preparedStatement.setString(9, prov.getCondicionesPago());
+            preparedStatement.setString(10, prov.getEstado().name());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar el proveedor: " + e.getMessage());
+            return false;
+        }
+        
+    }
+
+
+    public boolean Update_provedor(provedor prov) {
+        String sql = "UPDATE proveedor SET pais_proveedor = ?, ciudad_proveedor = ?, tipo_proveedor = ?, direccion_proveedor = ?, nombre_proveedor = ?, telefono_proveedor = ?, correo_proveedor = ?, fecha_registro = ?, condiciones_pago = ?, estado = ? WHERE id_proveedor = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, prov.getPaisProveedor());
+            preparedStatement.setString(2, prov.getCiudadProveedor());
+            preparedStatement.setString(3, prov.getTipoProveedor().name());
+            preparedStatement.setString(4, prov.getDireccionProveedor());
+            preparedStatement.setString(5, prov.getNombreProveedor());
+            preparedStatement.setString(6, prov.getTelefonoProveedor());
+            preparedStatement.setString(7, prov.getCorreoProveedor());
+            preparedStatement.setDate(8, java.sql.Date.valueOf(prov.getFechaRegistro()));
+            preparedStatement.setString(9, prov.getCondicionesPago());
+            preparedStatement.setString(10, prov.getEstado().name());
+            preparedStatement.setInt(11, prov.getIdProveedor());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar el proveedor: " + e.getMessage());
+            return false;
+        }
+    }
+    public boolean Delete_provedor(int id) {
+        String sql = "DELETE FROM proveedor WHERE id_proveedor = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar el proveedor: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+
+    public provedor getProvedorById(int id) {
+        String sql = "SELECT * FROM proveedor WHERE id_proveedor = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                provedor prov = new provedor();
+                prov.setIdProveedor(resultSet.getInt("id_proveedor"));
+                prov.setPaisProveedor(resultSet.getString("pais_proveedor"));
+                prov.setCiudadProveedor(resultSet.getString("ciudad_proveedor"));
+                prov.setTipoProveedor(provedor.TipoProveedor.valueOf(resultSet.getString("tipo_proveedor")));
+                prov.setDireccionProveedor(resultSet.getString("direccion_proveedor"));
+                prov.setNombreProveedor(resultSet.getString("nombre_proveedor"));
+                prov.setTelefonoProveedor(resultSet.getString("telefono_proveedor"));
+                prov.setCorreoProveedor(resultSet.getString("correo_proveedor"));
+                prov.setFechaRegistro(resultSet.getDate("fecha_registro").toLocalDate());
+                prov.setCondicionesPago(resultSet.getString("condiciones_pago"));
+                prov.setEstado(provedor.Estado.valueOf(resultSet.getString("estado")));
+                return prov;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener el proveedor: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+
+    // Provedor crud operations <>
 
 }

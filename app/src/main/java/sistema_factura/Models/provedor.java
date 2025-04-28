@@ -16,22 +16,19 @@ public class provedor {
     private String condicionesPago;
     private Estado estado;
 
-    
     public enum TipoProveedor {
         Nacional,
         Internacional
     }
 
-    
     public enum Estado {
         Activo,
         Inactivo
     }
 
-    
     public provedor(int idProveedor, String paisProveedor, String ciudadProveedor, TipoProveedor tipoProveedor,
-                     String direccionProveedor, String nombreProveedor, String telefonoProveedor, String correoProveedor,
-                     LocalDate fechaRegistro, String condicionesPago, Estado estado) {
+            String direccionProveedor, String nombreProveedor, String telefonoProveedor, String correoProveedor,
+            LocalDate fechaRegistro, String condicionesPago, Estado estado) {
         this.idProveedor = idProveedor;
         this.paisProveedor = paisProveedor;
         this.ciudadProveedor = ciudadProveedor;
@@ -46,9 +43,8 @@ public class provedor {
     }
 
     public provedor() {
-        
-    }
 
+    }
 
     public int getIdProveedor() {
         return idProveedor;
@@ -138,8 +134,6 @@ public class provedor {
         this.estado = estado;
     }
 
-  
+    
+    
 }
-
-
-
