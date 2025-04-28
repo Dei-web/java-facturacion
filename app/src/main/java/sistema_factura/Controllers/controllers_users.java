@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import org.mindrot.jbcrypt.BCrypt;
 import sistema_factura.Models.Cliente;
 import sistema_factura.Models.provedor;
+import sistema_factura.Models.Producto;
 
 public class controllers_users {
 
@@ -255,5 +256,88 @@ public class controllers_users {
 
 
     // Provedor crud operations <>
+    // Producto crud operations <>
+
+
+
+    public boolean Insert_Producto(Producto producto) {
+        String sql = "INSERT INTO producto (nombre_producto, precio_producto, stock_producto, descripcion_producto, categoria_producto, fecha_registro, estado, id_categoria_producto) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, producto.getNombreProducto());
+            preparedStatement.setBigDecimal(2, producto.getPrecioProducto());
+            preparedStatement.setInt(3, producto.getStockProducto());
+            preparedStatement.setString(4, producto.getDescripcionProducto());
+            preparedStatement.setString(5, producto.getCategoriaProducto());
+            preparedStatement.setDate(6, java.sql.Date.valueOf(producto.getFechaRegistro()));
+            preparedStatement.setString(7, producto.getEstado().name());
+            preparedStatement.setInt(8, producto.getIdCategoriaProducto());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar el producto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean Update_Producto(Producto producto) {
+        String sql = "UPDATE producto SET nombre_producto = ?, precio_producto = ?, stock_producto = ?, descripcion_producto = ?, categoria_producto = ?, fecha_registro = ?, estado = ?, id_categoria_producto = ? WHERE id_producto = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, producto.getNombreProducto());
+            preparedStatement.setBigDecimal(2, producto.getPrecioProducto());
+            preparedStatement.setInt(3, producto.getStockProducto());
+            preparedStatement.setString(4, producto.getDescripcionProducto());
+            preparedStatement.setString(5, producto.getCategoriaProducto());
+            preparedStatement.setDate(6, java.sql.Date.valueOf(producto.getFechaRegistro()));
+            preparedStatement.setString(7, producto.getEstado().name());
+            preparedStatement.setInt(8, producto.getIdCategoriaProducto());
+            preparedStatement.setInt(9, producto.getIdProducto());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar el producto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean Delete_Producto(int id) {
+        String sql = "DELETE FROM producto WHERE id_producto = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar el producto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Producto getProductoById(int id) {
+        String sql = "SELECT * FROM producto WHERE id_producto = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Producto producto = new Producto();
+                producto.setIdProducto(resultSet.getInt("id_producto"));
+                producto.setNombreProducto(resultSet.getString("nombre_producto"));
+                producto.setPrecioProducto(resultSet.getBigDecimal("precio_producto"));
+                producto.setStockProducto(resultSet.getInt("stock_producto"));
+                producto.setDescripcionProducto(resultSet.getString("descripcion_producto"));
+                producto.setCategoriaProducto(resultSet.getString("categoria_producto"));
+                producto.setFechaRegistro(resultSet.getDate("fecha_registro").toLocalDate());
+                producto.setEstado(Producto.Estado.valueOf(resultSet.getString("estado")));
+                return producto;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener el producto: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+
+    // Producto crud operations <>
+    
 
 }
