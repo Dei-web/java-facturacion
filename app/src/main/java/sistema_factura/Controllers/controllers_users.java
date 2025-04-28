@@ -16,6 +16,37 @@ public class controllers_users {
     ConfigDB config = new ConfigDB();
     private Connection connection = config.getConnection();
 
+
+//login method
+
+    public boolean login(String nombreUsuario, String contraseñaUsuario) {
+        String sql = "SELECT contraseña_usuario FROM usuario WHERE nombre_usuario = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, nombreUsuario);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                String hashedPassword = resultSet.getString("contraseña_usuario");
+                return BCrypt.checkpw(contraseñaUsuario, hashedPassword);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al verificar el usuario: " + e.getMessage());
+        }
+        return false;
+    }
+
+
+    public static boolean verifyPassword(String password, String hashed) {
+        return BCrypt.checkpw(password, hashed);
+    }
+
+    public static String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+
+    //login method
+
+
     // Users crud operations  <>
     public boolean Inser_User(Users user) {
        
