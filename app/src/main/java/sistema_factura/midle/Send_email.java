@@ -18,7 +18,7 @@ public class Send_email {
         String password = dov.get("PASSCODE");
 
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.auth", "tru");
         properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "587");
