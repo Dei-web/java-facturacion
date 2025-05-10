@@ -7,23 +7,27 @@ public class Categoria {
     private int idCategoria;
     private String nombreCategoria;
     private String descripcion;
-    private String estado; // Podrías usar un Enum si quieres limitarlo a "Activo" y "Inactivo"
+    private Estado estado; 
     private LocalDate fechaRegistro;
 
-    // Constructor vacío
+    public enum Estado {
+        Activo,
+        Inactivo
+    }
+
     public Categoria() {
     }
 
-    // Constructor con parámetros
-    public Categoria(int idCategoria, String nombreCategoria, String descripcion, String estado, LocalDate fechaRegistro) {
+    
+    public Categoria(int idCategoria, String nombreCategoria, String descripcion, Estado estado, LocalDate fechaRegistro) {
         this.idCategoria = idCategoria;
         this.nombreCategoria = nombreCategoria;
         this.descripcion = descripcion;
-        this.estado = estado;
-        this.fechaRegistro = fechaRegistro;
+        this.estado = (estado != null) ? estado : Estado.Inactivo;
+        this.fechaRegistro = (fechaRegistro != null) ? fechaRegistro : LocalDate.now();
     }
 
-    // Getters y Setters
+    
 
     public int getIdCategoria() {
         return idCategoria;
@@ -49,11 +53,11 @@ public class Categoria {
         this.descripcion = descripcion;
     }
 
-    public String getEstado() {
+    public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Estado estado) {
         this.estado = estado;
     }
 

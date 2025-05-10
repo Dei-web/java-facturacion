@@ -6,10 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.checkerframework.checker.units.qual.C;
 import org.mindrot.jbcrypt.BCrypt;
 import sistema_factura.Models.Cliente;
 import sistema_factura.Models.provedor;
 import sistema_factura.Models.Producto;
+import sistema_factura.Models.Categoria;
 
 public class controllers_users {
 
@@ -370,5 +373,76 @@ public class controllers_users {
 
     // Producto crud operations <>
     
+    // Category crud operations <>
+
+    public boolean create_categoria(Categoria categoria) {
+        String sqString = "INSERT INTO categoria (nombre_categoria, descripcion, estado, fecha_registro) " +
+                "VALUES (?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqString)) {
+            preparedStatement.setString(1, categoria.getNombreCategoria());
+            preparedStatement.setString(2, categoria.getDescripcion());
+            preparedStatement.setString(3, categoria.getEstado().name());
+            preparedStatement.setDate(4, java.sql.Date.valueOf(categoria.getFechaRegistro()));
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar la categoria: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean update_categoria(Categoria categoria) {
+        String sql = "UPDATE categoria SET nombre_categoria = ?, descripcion = ?, estado = ?, fecha_registro = ? WHERE id_categoria = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, categoria.getNombreCategoria());
+            preparedStatement.setString(2, categoria.getDescripcion());
+            preparedStatement.setString(3, categoria.getEstado().name());
+            preparedStatement.setDate(4, java.sql.Date.valueOf(categoria.getFechaRegistro()));
+            preparedStatement.setInt(5, categoria.getIdCategoria());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar la categoria: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean delete_categoria(int id) {
+        String sql = "DELETE FROM categoria WHERE id_categoria = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar la categoria: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Categoria getCategoriaById(int id) {
+        String sql = "SELECT * FROM categoria WHERE id_categoria = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Categoria categoria = new Categoria();
+                categoria.setIdCategoria(resultSet.getInt("id_categoria"));
+                categoria.setNombreCategoria(resultSet.getString("nombre_categoria"));
+                categoria.setDescripcion(resultSet.getString("descripcion"));
+                categoria.setEstado(Categoria.Estado.valueOf(resultSet.getString("estado")));
+                categoria.setFechaRegistro(resultSet.getDate("fecha_registro").toLocalDate());
+                return categoria;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener la categoria: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+
+
+
+    // Category crud operations <>
 
 }
