@@ -6,13 +6,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.checkerframework.checker.units.qual.C;
 import org.mindrot.jbcrypt.BCrypt;
 import sistema_factura.Models.Cliente;
+import sistema_factura.Models.Factura;
 import sistema_factura.Models.provedor;
 import sistema_factura.Models.Producto;
 import sistema_factura.Models.Categoria;
+import sistema_factura.Models.provedor;
 
 public class controllers_users {
 
@@ -406,7 +407,7 @@ public class controllers_users {
             return false;
         }
     }
-    
+
     public boolean delete_categoria(int id) {
         String sql = "DELETE FROM categoria WHERE id_categoria = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -440,9 +441,78 @@ public class controllers_users {
     }
 
 
-
-
-
     // Category crud operations <>
 
+    //factura crud operations <>
+
+
+    public boolean Create_Factura(Factura factura){
+        String sql = "INSERT INTO factura (fecha_registro, id_cliente, id_usuario_vendedor, total_venta, estado) " +
+                     "VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setTimestamp(1, java.sql.Timestamp.valueOf(factura.getFechaRegistro()));
+            preparedStatement.setInt(2, factura.getIdCliente());
+            preparedStatement.setInt(3, factura.getIdUsuarioVendedor());
+            preparedStatement.setBigDecimal(4, factura.getTotalVenta());
+            preparedStatement.setString(5, factura.getEstado().name());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar la factura: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean Update_Factura(Factura factura) {
+        String sql = "UPDATE factura SET fecha_registro = ?, id_cliente = ?, id_usuario_vendedor = ?, total_venta = ?, estado = ? WHERE id_factura = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setTimestamp(1, java.sql.Timestamp.valueOf(factura.getFechaRegistro()));
+            preparedStatement.setInt(2, factura.getIdCliente());
+            preparedStatement.setInt(3, factura.getIdUsuarioVendedor());
+            preparedStatement.setBigDecimal(4, factura.getTotalVenta());
+            preparedStatement.setString(5, factura.getEstado().name());
+            preparedStatement.setInt(6, factura.getIdFactura());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar la factura: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean Delete_Factura(int id) {
+        String sql = "DELETE FROM factura WHERE id_factura = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar la factura: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public Factura getFacturaById(int id) {
+        String sql = "SELECT * FROM factura WHERE id_factura = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Factura factura = new Factura();
+                factura.setIdFactura(resultSet.getInt("id_factura"));
+                factura.setFechaRegistro(resultSet.getTimestamp("fecha_registro").toLocalDateTime());
+                factura.setIdCliente(resultSet.getInt("id_cliente"));
+                factura.setIdUsuarioVendedor(resultSet.getInt("id_usuario_vendedor"));
+                factura.setTotalVenta(resultSet.getBigDecimal("total_venta"));
+                factura.setEstado(Factura.Estado.valueOf(resultSet.getString("estado")));
+                return factura;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener la factura: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    //factura crud operations <>
 }
