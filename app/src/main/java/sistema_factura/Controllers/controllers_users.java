@@ -13,7 +13,7 @@ import sistema_factura.Models.Factura;
 import sistema_factura.Models.provedor;
 import sistema_factura.Models.Producto;
 import sistema_factura.Models.Categoria;
-import sistema_factura.Models.provedor;
+
 
 public class controllers_users {
 
@@ -23,19 +23,23 @@ public class controllers_users {
 
 //login method
 
-    public boolean login(String nombreUsuario, String contraseñaUsuario) {
-        String sql = "SELECT contraseña_usuario FROM usuario WHERE nombre_usuario = ?";
+    public String login(String nombreUsuario, String contraseñaUsuario) {
+        String sql = "SELECT contraseña_usuario , privilegio FROM usuario WHERE nombre_usuario = ? OR correoUsuario = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, nombreUsuario);
+            preparedStatement.setString(2, nombreUsuario);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String hashedPassword = resultSet.getString("contraseña_usuario");
-                return BCrypt.checkpw(contraseñaUsuario, hashedPassword);
+                String privilegio = resultSet.getString("privilegio");
+                if (BCrypt.checkpw(contraseñaUsuario, hashedPassword)) {
+                    return privilegio;
+            }
             }
         } catch (SQLException e) {
             System.out.println("Error al verificar el usuario: " + e.getMessage());
         }
-        return false;
+        return null;
     }
 
 
@@ -491,7 +495,7 @@ public class controllers_users {
             return false;
         }
     }
-    
+
     public Factura getFacturaById(int id) {
         String sql = "SELECT * FROM factura WHERE id_factura = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
