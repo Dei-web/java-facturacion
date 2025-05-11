@@ -32,7 +32,7 @@ public class controllers_users {
             if (resultSet.next()) {
                 String hashedPassword = resultSet.getString("contraseña_usuario");
                 String privilegio = resultSet.getString("privilegio");
-                if (BCrypt.checkpw(contraseñaUsuario, hashedPassword)) {
+                if (verifyPassword(contraseñaUsuario, hashedPassword)) {
                     return privilegio;
             }
             }
